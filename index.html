@@ -120,7 +120,7 @@
         const messageInput = document.getElementById('message-input');
         const chatWindow = document.getElementById('chat-window');
 
-       const socket = new WebSocket('ws://https://shraiy.github.io/real-time-chat/'); // Replace <your-server-url>
+       const socket = new WebSocket('ws://localhost:8080');
 
         // Function to handle incoming messages
         socket.onmessage = (event) => {
