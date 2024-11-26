@@ -124,9 +124,17 @@
 
         // Function to handle incoming messages
         socket.onmessage = (event) => {
-            const message = event.data;
-            displayMessage(message, 'received');
+            const messageData = JSON.parse(event.data); // Parse the incoming JSON data
+            
+            // Check if the message data is a buffer and convert to string
+            if (messageData.message.type === 'Buffer') {
+                const message = Buffer.from(messageData.message.data).toString('utf-8'); // Decode buffer to string
+                displayMessage(message, 'received');
+            } else {
+                displayMessage(messageData.message, 'received');
+            }
         };
+
 
         // Function to send message to server
         sendButton.addEventListener('click', () => {
