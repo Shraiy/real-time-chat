@@ -125,18 +125,15 @@
 
     // Function to handle incoming messages
     socket.onmessage = (event) => {
-        const messageData = JSON.parse(event.data); // Parse the incoming JSON data
-        const { message, sender } = messageData; // Destructure message and sender from the data
-        console.log(message, sender);
-        displayMessage(message, sender === 'User' ? 'sent' : 'received');
+        const message = event.data; // Receive raw string message
+        displayMessage(message, 'received');
     };
 
     // Function to send message to the server
     sendButton.addEventListener('click', () => {
         const message = messageInput.value.trim();
         if (message) {
-            const messageData = { message }; // Wrap the message in an object
-            socket.send(JSON.stringify(messageData)); // Send the message as a JSON string
+            socket.send(message); // Send the message as plain string
             displayMessage(message, 'sent');
             messageInput.value = ''; // Clear the input field
         }
@@ -146,7 +143,7 @@
     function displayMessage(message, type) {
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message', type);
-        messageDiv.textContent = message;
+        messageDiv.textContent = message; // Display the message text
         chatWindow.appendChild(messageDiv);
         chatWindow.scrollTop = chatWindow.scrollHeight; // Auto-scroll to the bottom
     }
