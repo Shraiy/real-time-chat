@@ -19,13 +19,13 @@ wss.on('connection', (ws) => {
     clients.add(ws);
 
     // Notify others of a new connection
-    broadcast('A new user has joined the chat.', ws);
+    broadcast({ message: 'A new user has joined the chat.' }, ws);
 
     // Handle incoming messages
     ws.on('message', (message) => {
         console.log(`Received: ${message}`);
         // Broadcast the message to all clients
-        broadcast(message, ws); // Send the message directly without wrapping it
+        broadcast({ message: message.toString(), sender: 'User' }, ws); // Send plain string
     });
 
     // Handle client disconnection
@@ -34,7 +34,7 @@ wss.on('connection', (ws) => {
         // Remove the client from the set
         clients.delete(ws);
         // Notify other clients that someone left
-        broadcast('A user has left the chat.', ws);
+        broadcast({ message: 'A user has left the chat.' }, ws);
     });
 
     // Handle errors (optional)
@@ -44,7 +44,9 @@ wss.on('connection', (ws) => {
 });
 
 // Broadcast message to all connected clients except the sender
-function broadcast(message, sender) {
+function broadcast(data, sender) {
+    const message = JSON.stringify(data); // Send data as JSON
+
     clients.forEach((client) => {
         if (client !== sender && client.readyState === WebSocket.OPEN) {
             client.send(message); // Send the message to other clients
