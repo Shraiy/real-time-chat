@@ -25,7 +25,7 @@ wss.on('connection', (ws) => {
     ws.on('message', (message) => {
         console.log(`Received: ${message}`);
         // Broadcast the message to all clients
-        broadcast({ message, sender: 'User' }, ws); // You can include additional metadata here
+        broadcast({ message: message, sender: 'User' }, ws); // Send the message properly
     });
 
     // Handle client disconnection
