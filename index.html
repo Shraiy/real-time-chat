@@ -120,33 +120,28 @@
         const messageInput = document.getElementById('message-input');
         const chatWindow = document.getElementById('chat-window');
 
-       const socket = new WebSocket('wss://real-time-chat-5hbq.onrender.com');
+        // Connect to the WebSocket server
+        const socket = new WebSocket('wss://real-time-chat-5hbq.onrender.com');
 
         // Function to handle incoming messages
         socket.onmessage = (event) => {
             const messageData = JSON.parse(event.data); // Parse the incoming JSON data
-            
-            // Check if the message data is a buffer and convert to string
-            if (messageData.message.type === 'Buffer') {
-                const message = Buffer.from(messageData.message.data).toString('utf-8'); // Decode buffer to string
-                displayMessage(message, 'received');
-            } else {
-                displayMessage(messageData.message, 'received');
-            }
+            const { message, sender } = messageData; // Destructure message and sender from the data
+            displayMessage(message, sender === 'User' ? 'sent' : 'received');
         };
 
-
-        // Function to send message to server
+        // Function to send message to the server
         sendButton.addEventListener('click', () => {
             const message = messageInput.value.trim();
             if (message) {
-                socket.send(message);
+                const messageData = { message }; // Wrap the message in an object
+                socket.send(JSON.stringify(messageData)); // Send the message as a JSON string
                 displayMessage(message, 'sent');
                 messageInput.value = ''; // Clear the input field
             }
         });
 
-        // Display message in chat window
+        // Display message in the chat window
         function displayMessage(message, type) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', type);
