@@ -115,46 +115,47 @@
         </div>
     </div>
 
-<script>
-    const sendButton = document.getElementById('send-btn');
-    const messageInput = document.getElementById('message-input');
-    const chatWindow = document.getElementById('chat-window');
+    <script>
+        const sendButton = document.getElementById('send-btn');
+        const messageInput = document.getElementById('message-input');
+        const chatWindow = document.getElementById('chat-window');
 
-    // Connect to the WebSocket server
-    const socket = new WebSocket('wss://real-time-chat-5hbq.onrender.com');
+        const socket = new WebSocket('wss://real-time-chat-5hbq.onrender.com');
 
-    // Function to handle incoming messages
-    socket.onmessage = (event) => {
-        const message = event.data; // Receive raw string message
-        displayMessage(message, 'received');
-    };
+        // Function to handle incoming messages
+        socket.onmessage = (event) => {
+            const messageData = JSON.parse(event.data); // Parse the incoming JSON data
+            
+            // Display message in chat window
+            displayMessage(messageData.message, 'received');
+        };
 
-    // Function to send message to the server
-    sendButton.addEventListener('click', () => {
-        const message = messageInput.value.trim();
-        if (message) {
-            socket.send(message); // Send the message as plain string
-            displayMessage(message, 'sent');
-            messageInput.value = ''; // Clear the input field
+        // Function to send message to server
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value.trim();
+            if (message) {
+                socket.send(message);
+                displayMessage(message, 'sent');
+                messageInput.value = ''; // Clear the input field
+            }
+        });
+
+        // Display message in chat window
+        function displayMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', type);
+            messageDiv.textContent = message;
+            chatWindow.appendChild(messageDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight; // Auto-scroll to the bottom
         }
-    });
 
-    // Display message in the chat window
-    function displayMessage(message, type) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message', type);
-        messageDiv.textContent = message; // Display the message text
-        chatWindow.appendChild(messageDiv);
-        chatWindow.scrollTop = chatWindow.scrollHeight; // Auto-scroll to the bottom
-    }
-
-    // Handle Enter key for sending messages
-    messageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            sendButton.click();
-        }
-    });
-</script>
+        // Handle Enter key for sending messages
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+    </script>
 
 </body>
 </html>
